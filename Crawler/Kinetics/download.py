@@ -96,7 +96,7 @@ def download_clip(video_identifier, output_filename,
                 return status, err.output
         else:
             break
-
+    print(tmp_filename)
     tmp_filename = glob.glob('%s*' % tmp_filename.split('.')[0])[0]
     print(tmp_filename)
     if scale:
