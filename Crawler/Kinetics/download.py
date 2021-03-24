@@ -79,6 +79,7 @@ def download_clip(video_identifier, output_filename,
     tmp_filename = os.path.join(tmp_dir,
                                 '%s.%%(ext)s' % uuid.uuid4())
     command = ['youtube-dl',
+               '--proxy', 'http://9.131.113.25:11113',
                '--quiet', '--no-warnings',
                '-f', 'mp4',
                '-o', '"%s"' % tmp_filename,
