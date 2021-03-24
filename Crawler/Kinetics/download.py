@@ -98,11 +98,13 @@ def download_clip(video_identifier, output_filename,
             break
 
     tmp_filename = glob.glob('%s*' % tmp_filename.split('.')[0])[0]
+    print(tmp_filename)
     if scale:
         command = 'ffprobe -hide_banner -loglevel error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 %s' % (tmp_filename)
         #tmp_info = subprocess.check_output(command, shell=True,
         #                                 stderr=subprocess.STDOUT)
         tmp_info = os.popen(command)
+        print(tmp_info)
         w, h = [int(d) for d in tmp_info.readline().rstrip().split(',')]
         # Construct command to trim the videos (ffmpeg required).
         if w > h:
