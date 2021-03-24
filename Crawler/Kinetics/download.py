@@ -53,6 +53,7 @@ def download_clip(video_identifier, output_filename,
                   start_time, end_time,
                   tmp_dir='/tmp/kinetics',
                   num_attempts=5,
+                  scale=None,
                   url_base='https://www.youtube.com/watch?v='):
     """Download a video from youtube if exists and is not blocked.
 
@@ -96,15 +97,40 @@ def download_clip(video_identifier, output_filename,
             break
 
     tmp_filename = glob.glob('%s*' % tmp_filename.split('.')[0])[0]
-    # Construct command to trim the videos (ffmpeg required).
-    command = ['ffmpeg',
-               '-i', '"%s"' % tmp_filename,
-               '-ss', str(start_time),
-               '-t', str(end_time - start_time),
-               '-c:v', 'libx264', '-c:a', 'copy',
-               '-threads', '1',
-               '-loglevel', 'panic',
-               '"%s"' % output_filename]
+    if scale:
+        command = 'ffprobe -hide_banner -loglevel error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 %s' % (tmp_filename)
+        #tmp_info = subprocess.check_output(command, shell=True,
+        #                                 stderr=subprocess.STDOUT)
+        tmp_info = os.popen(command)
+        w, h = [int(d) for d in tmp_info.readline().rstrip().split(',')]
+        # Construct command to trim the videos (ffmpeg required).
+        if w > h:
+            command = ['ffmpeg',
+                       '-i', '"%s"' % tmp_filename,
+                       '-ss', str(start_time),
+                       '-t', str(end_time - start_time),
+                       '-c:v', 'libx264', '-c:a', 'copy',
+                       '-threads', '1',
+                       '-loglevel', 'panic', '-vf', 'scale=-2:%d' % scale,
+                       '"%s"' % output_filename]
+        else:
+            command = ['ffmpeg',
+                       '-i', '"%s"' % tmp_filename,
+                       '-ss', str(start_time),
+                       '-t', str(end_time - start_time),
+                       '-c:v', 'libx264', '-c:a', 'copy',
+                       '-threads', '1',
+                       '-loglevel', 'panic', '-vf', 'scale=%d:-2' % scale,
+                       '"%s"' % output_filename]
+    else:
+        command = ['ffmpeg',
+                   '-i', '"%s"' % tmp_filename,
+                   '-ss', str(start_time),
+                   '-t', str(end_time - start_time),
+                   '-c:v', 'libx264', '-c:a', 'copy',
+                   '-threads', '1',
+                   '-loglevel', 'panic',
+                   '"%s"' % output_filename]
     command = ' '.join(command)
     try:
         output = subprocess.check_output(command, shell=True,
@@ -118,7 +144,7 @@ def download_clip(video_identifier, output_filename,
     return status, 'Downloaded'
 
 
-def download_clip_wrapper(row, label_to_dir, trim_format, tmp_dir):
+def download_clip_wrapper(row, label_to_dir, trim_format, tmp_dir, scale):
     """Wrapper for parallel processing purposes."""
     output_filename = construct_video_filename(row, label_to_dir,
                                                trim_format)
@@ -129,7 +155,7 @@ def download_clip_wrapper(row, label_to_dir, trim_format, tmp_dir):
 
     downloaded, log = download_clip(row['video-id'], output_filename,
                                     row['start-time'], row['end-time'],
-                                    tmp_dir=tmp_dir)
+                                    tmp_dir=tmp_dir, scale=scale)
     status = tuple([clip_id, downloaded, log])
     return status
 
@@ -164,7 +190,7 @@ def parse_kinetics_annotations(input_csv, ignore_is_cc=False):
 
 def main(input_csv, output_dir,
          trim_format='%06d', num_jobs=24, tmp_dir='/tmp/kinetics',
-         drop_duplicates=False, download_report='/tmp/kinetics/download_report.json'):
+         drop_duplicates=False, download_report='/tmp/kinetics/download_report.json', scale=None):
 
     # Reading and parsing Kinetics.
     dataset = parse_kinetics_annotations(input_csv)
@@ -186,11 +212,11 @@ def main(input_csv, output_dir,
         status_lst = []
         for i, row in dataset.iterrows():
             status_lst.append(download_clip_wrapper(row, label_to_dir,
-                                                    trim_format, tmp_dir))
+                                                    trim_format, tmp_dir, scale))
     else:
         status_lst = Parallel(n_jobs=num_jobs)(delayed(download_clip_wrapper)(
             row, label_to_dir,
-            trim_format, tmp_dir) for i, row in dataset.iterrows())
+            trim_format, tmp_dir, scale) for i, row in dataset.iterrows())
 
     # Clean tmp dir.
     shutil.rmtree(tmp_dir)
@@ -218,4 +244,5 @@ if __name__ == '__main__':
                    help='Unavailable at the moment')
     p.add_argument('--download-report', type=str, default='/tmp/kinetics/download_report.json')
                    # help='CSV file of the previous version of Kinetics.')
+    p.add_argument('-s', '--scale', type=int, default=None)
     main(**vars(p.parse_args()))
