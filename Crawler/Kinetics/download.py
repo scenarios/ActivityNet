@@ -164,7 +164,7 @@ def parse_kinetics_annotations(input_csv, ignore_is_cc=False):
 
 def main(input_csv, output_dir,
          trim_format='%06d', num_jobs=24, tmp_dir='/tmp/kinetics',
-         drop_duplicates=False):
+         drop_duplicates=False, download_report='/tmp/kinetics/download_report.json'):
 
     # Reading and parsing Kinetics.
     dataset = parse_kinetics_annotations(input_csv)
@@ -196,7 +196,7 @@ def main(input_csv, output_dir,
     shutil.rmtree(tmp_dir)
 
     # Save download report.
-    with open('download_report.json', 'w') as fobj:
+    with open(download_report, 'w') as fobj:
         fobj.write(json.dumps(status_lst))
 
 
@@ -216,5 +216,6 @@ if __name__ == '__main__':
     p.add_argument('-t', '--tmp-dir', type=str, default='/tmp/kinetics')
     p.add_argument('--drop-duplicates', type=str, default='non-existent',
                    help='Unavailable at the moment')
+    p.add_argument('--download-report', type=str, default='/tmp/kinetics/download_report.json')
                    # help='CSV file of the previous version of Kinetics.')
     main(**vars(p.parse_args()))
