@@ -137,7 +137,7 @@ def download_clip(video_identifier, output_filename,
                    '"%s"' % output_filename,
                    '&&', 'chmod 777 "%s"' % output_filename]
         '''
-        command = ['cp', '"%s"' % tmp_filename, os.path.join(['/mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/', tmp_filename.split('/')[-1]])]
+        command = ['cp', '"%s"' % tmp_filename, os.path.join('/mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/', tmp_filename.split('/')[-1])]
     command = ' '.join(command)
     try:
         output = subprocess.check_output(command, shell=True,
