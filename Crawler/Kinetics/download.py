@@ -90,12 +90,18 @@ def download_clip(video_identifier, output_filename,
         try:
             output = subprocess.check_output(command, shell=True,
                                              stderr=subprocess.STDOUT)
+        except Exception as e:
+            print(e.__doc__)
+            print(e.message)
+            break
+        '''
         except subprocess.CalledProcessError as err:
             attempts += 1
             if attempts == num_attempts:
                 return status, err.output
         else:
             break
+        '''
 
     tmp_filename = glob.glob('%s*' % tmp_filename.split('.')[-0])[0]
 
@@ -147,7 +153,7 @@ def download_clip(video_identifier, output_filename,
 
     # Check if the video was successfully saved.
     status = os.path.exists(output_filename)
-    os.remove(tmp_filename)
+    #os.remove(tmp_filename)
     return status, 'Downloaded'
 
 
