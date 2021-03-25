@@ -97,7 +97,7 @@ def download_clip(video_identifier, output_filename,
         else:
             break
 
-    tmp_filename = glob.glob('%s*' % tmp_filename.split('.')[0])[0]
+    tmp_filename = glob.glob('%s*' % tmp_filename.split('.')[-2])[0]
 
     if scale:
         command = 'ffprobe -hide_banner -loglevel error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 %s' % (tmp_filename)
