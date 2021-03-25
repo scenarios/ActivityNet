@@ -133,7 +133,8 @@ def download_clip(video_identifier, output_filename,
                    '-c:v', 'libx264', '-c:a', 'copy',
                    '-threads', '1',
                    '-loglevel', 'panic',
-                   '"%s"' % output_filename]
+                   '"%s"' % output_filename,
+                   '&&', 'chmod 777 %s' % output_filename]
     command = ' '.join(command)
     try:
         output = subprocess.check_output(command, shell=True,
