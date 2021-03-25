@@ -134,9 +134,9 @@ def download_clip(video_identifier, output_filename,
                    '-c:v', 'libx264', '-c:a', 'copy',
                    '-threads', '1',
                    '-loglevel', 'panic',
-                   '"%s"' % output_filename,
-                   '&&', 'chmod 777 "%s"' % output_filename]
-        
+                   '"%s"' % output_filename]
+        print(tmp_filename)
+        print(output_filename)
         #command = ['cp', '"%s"' % tmp_filename, os.path.join('/mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/', tmp_filename.split('/')[-1])]
     command = ' '.join(command)
     try:
@@ -230,6 +230,7 @@ def main(input_csv, output_dir,
 
     # Save download report.
     with open(download_report, 'w') as fobj:
+        print(status_lst)
         fobj.write(json.dumps(status_lst))
 
 
