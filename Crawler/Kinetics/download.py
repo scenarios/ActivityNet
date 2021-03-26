@@ -106,7 +106,6 @@ def download_clip(video_identifier, output_filename,
 
         w, h = [int(d) for d in tmp_info.readline().rstrip().split(',')]
         # Construct command to trim the videos (ffmpeg required).
-        print([w, h])
         if w > h:
             command = ['ffmpeg',
                        '-i', '"%s"' % tmp_filename,
@@ -148,7 +147,6 @@ def download_clip(video_identifier, output_filename,
     # Check if the video was successfully saved.
     status = os.path.exists(local_output_filename)
     if status:
-        print('moving from %s to %s' %(local_output_filename, output_filename))
         command = ['mv',
                    '"%s"' % local_output_filename,
                    '"%s"' % output_filename]
@@ -237,7 +235,7 @@ def main(input_csv, output_dir,
             trim_format, tmp_dir, scale) for i, row in dataset.iterrows())
 
     # Clean tmp dir.
-    #shutil.rmtree(tmp_dir)
+    shutil.rmtree(tmp_dir)
 
     # Save download report.
     with open(download_report, 'w') as fobj:
