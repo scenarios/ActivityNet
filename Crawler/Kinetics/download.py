@@ -18,19 +18,19 @@ def create_video_folders(dataset, output_dir, tmp_dir):
     if 'label-name' not in dataset.columns:
         this_dir = os.path.join(output_dir, 'test')
         if not os.path.exists(this_dir):
-            os.makedirs(this_dir, exist_ok = True)
+            os.makedirs(this_dir)
         # I should return a dict but ...
         return this_dir
     if not os.path.exists(output_dir):
-        os.makedirs(output_dir, exist_ok = True)
+        os.makedirs(output_dir)
     if not os.path.exists(tmp_dir):
-        os.makedirs(tmp_dir, exist_ok = True)
+        os.makedirs(tmp_dir)
 
     label_to_dir = {}
     for label_name in dataset['label-name'].unique():
         this_dir = os.path.join(output_dir, label_name)
         if not os.path.exists(this_dir):
-            os.makedirs(this_dir, exist_ok = True)
+            os.makedirs(this_dir)
         label_to_dir[label_name] = this_dir
     return label_to_dir
 
