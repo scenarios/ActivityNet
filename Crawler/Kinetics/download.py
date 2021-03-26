@@ -111,9 +111,8 @@ def download_clip(video_identifier, output_filename,
                        '-i', '"%s"' % tmp_filename,
                        '-ss', str(start_time),
                        '-t', str(end_time - start_time),
-                       '-vf', 'scale=-2:%d' % scale,
                        '-c:v', 'libx264', '-c:a', 'copy',
-                       '-threads', '1',
+                       '-threads', '1', '-vf', 'scale=-2:%d' % scale,
                        '-loglevel', 'panic',
                        '"%s"' % local_output_filename]
         else:
@@ -121,9 +120,8 @@ def download_clip(video_identifier, output_filename,
                        '-i', '"%s"' % tmp_filename,
                        '-ss', str(start_time),
                        '-t', str(end_time - start_time),
-                       '-vf', 'scale=%d:-2' % scale,
                        '-c:v', 'libx264', '-c:a', 'copy',
-                       '-threads', '1',
+                       '-threads', '1', '-vf', 'scale=%d:-2' % scale,
                        '-loglevel', 'panic',
                        '"%s"' % local_output_filename]
     else:
