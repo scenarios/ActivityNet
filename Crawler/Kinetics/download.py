@@ -11,6 +11,7 @@ from joblib import delayed
 from joblib import Parallel
 import pandas as pd
 
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 
 def create_video_folders(dataset, output_dir, tmp_dir):
     """Creates a directory for each label name in the dataset."""
@@ -90,18 +91,12 @@ def download_clip(video_identifier, output_filename,
         try:
             output = subprocess.check_output(command, shell=True,
                                              stderr=subprocess.STDOUT)
-        except Exception as e:
-            print(e.__doc__)
-            print(e.message)
-            break
-        '''
         except subprocess.CalledProcessError as err:
             attempts += 1
             if attempts == num_attempts:
                 return status, err.output
         else:
             break
-        '''
 
     tmp_filename = glob.glob('%s*' % tmp_filename.split('.')[-0])[0]
 
@@ -132,7 +127,7 @@ def download_clip(video_identifier, output_filename,
                        '-loglevel', 'panic', '-vf', 'scale=%d:-2' % scale,
                        '"%s"' % output_filename]
     else:
-
+        '''
         command = ['ffmpeg',
                    '-i', '"%s"' % tmp_filename,
                    '-ss', str(start_time),
@@ -141,6 +136,8 @@ def download_clip(video_identifier, output_filename,
                    '-threads', '1',
                    '-loglevel', 'panic',
                    '"%s"' % output_filename]
+        '''
+        ffmpeg_extract_subclip(tmp_filename, 1, 5, targetname=output_filename)
         print(tmp_filename)
         print(output_filename)
         #command = ['cp', '"%s"' % tmp_filename, os.path.join('/mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/', tmp_filename.split('/')[-1])]
