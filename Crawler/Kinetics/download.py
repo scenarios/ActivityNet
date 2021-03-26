@@ -11,24 +11,26 @@ from joblib import delayed
 from joblib import Parallel
 import pandas as pd
 
+import time
+
 def create_video_folders(dataset, output_dir, tmp_dir):
     """Creates a directory for each label name in the dataset."""
     if 'label-name' not in dataset.columns:
         this_dir = os.path.join(output_dir, 'test')
         if not os.path.exists(this_dir):
-            os.makedirs(this_dir)
+            os.makedirs(this_dir, exist_ok = True)
         # I should return a dict but ...
         return this_dir
     if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+        os.makedirs(output_dir, exist_ok = True)
     if not os.path.exists(tmp_dir):
-        os.makedirs(tmp_dir)
+        os.makedirs(tmp_dir, exist_ok = True)
 
     label_to_dir = {}
     for label_name in dataset['label-name'].unique():
         this_dir = os.path.join(output_dir, label_name)
         if not os.path.exists(this_dir):
-            os.makedirs(this_dir)
+            os.makedirs(this_dir, exist_ok = True)
         label_to_dir[label_name] = this_dir
     return label_to_dir
 
@@ -206,7 +208,7 @@ def parse_kinetics_annotations(input_csv, ignore_is_cc=False):
 
 def main(input_csv, output_dir,
          trim_format='%06d', num_jobs=24, tmp_dir='/tmp/kinetics',
-         drop_duplicates=False, download_report='/tmp/kinetics/download_report.json', scale=None):
+         drop_duplicates=False, download_report='/tmp/kinetics/download_report.json', scale=None, create_dir_only=False):
 
     # Reading and parsing Kinetics.
     dataset = parse_kinetics_annotations(input_csv)
@@ -223,23 +225,24 @@ def main(input_csv, output_dir,
     # Creates folders where videos will be saved later.
     label_to_dir = create_video_folders(dataset, output_dir, tmp_dir)
 
-    # Download all clips.
-    if num_jobs == 1:
-        status_lst = []
-        for i, row in dataset.iterrows():
-            status_lst.append(download_clip_wrapper(row, label_to_dir,
-                                                    trim_format, tmp_dir, scale))
-    else:
-        status_lst = Parallel(n_jobs=num_jobs)(delayed(download_clip_wrapper)(
-            row, label_to_dir,
-            trim_format, tmp_dir, scale) for i, row in dataset.iterrows())
+    if not create_dir_only:
+        # Download all clips.
+        if num_jobs == 1:
+            status_lst = []
+            for i, row in dataset.iterrows():
+                status_lst.append(download_clip_wrapper(row, label_to_dir,
+                                                        trim_format, tmp_dir, scale))
+        else:
+            status_lst = Parallel(n_jobs=num_jobs)(delayed(download_clip_wrapper)(
+                row, label_to_dir,
+                trim_format, tmp_dir, scale) for i, row in dataset.iterrows())
 
-    # Clean tmp dir.
-    shutil.rmtree(tmp_dir)
+        # Clean tmp dir.
+        shutil.rmtree(tmp_dir)
 
-    # Save download report.
-    with open(download_report, 'w') as fobj:
-        fobj.write(json.dumps(status_lst))
+        # Save download report.
+        with open(download_report, 'w') as fobj:
+            fobj.write(json.dumps(status_lst))
 
 
 if __name__ == '__main__':
@@ -261,4 +264,6 @@ if __name__ == '__main__':
     p.add_argument('--download-report', type=str, default='/tmp/kinetics/download_report.json')
                    # help='CSV file of the previous version of Kinetics.')
     p.add_argument('-s', '--scale', type=int, default=None)
+    p.add_argument('-c', '--create_dir_only', type=bool, default=False)
+
     main(**vars(p.parse_args()))
