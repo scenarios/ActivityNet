@@ -106,6 +106,7 @@ def download_clip(video_identifier, output_filename,
 
         w, h = [int(d) for d in tmp_info.readline().rstrip().split(',')]
         # Construct command to trim the videos (ffmpeg required).
+        print([w, h])
         if w > h:
             command = ['ffmpeg',
                        '-i', '"%s"' % tmp_filename,
@@ -145,14 +146,7 @@ def download_clip(video_identifier, output_filename,
 
     os.remove(tmp_filename)
     # Check if the video was successfully saved.
-    BASE_DIR = os.path.dirname(os.path.realpath(__file__))
-    print(local_output_filename)
     status = os.path.exists(local_output_filename)
-    print(status)
-    local_output_filename = os.path.join(BASE_DIR, local_output_filename)
-    print(local_output_filename)
-    status = os.path.exists(local_output_filename)
-    print(status)
     if status:
         print('moving from %s to %s' %(local_output_filename, output_filename))
         command = ['mv',
