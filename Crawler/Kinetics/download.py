@@ -11,8 +11,6 @@ from joblib import delayed
 from joblib import Parallel
 import pandas as pd
 
-from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
-
 def create_video_folders(dataset, output_dir, tmp_dir):
     """Creates a directory for each label name in the dataset."""
     if 'label-name' not in dataset.columns:
@@ -138,7 +136,6 @@ def download_clip(video_identifier, output_filename,
                    '-threads', '1',
                    '-loglevel', 'panic',
                    '"%s"' % local_output_filename]
-        #command = ['cp', '"%s"' % tmp_filename, os.path.join('/mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/', tmp_filename.split('/')[-1])]
 
     command = ' '.join(command)
     try:
