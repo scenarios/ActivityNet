@@ -98,8 +98,8 @@ def download_clip(video_identifier, output_filename,
         else:
             break
 
-    tmp_filename = glob.glob('%s*' % tmp_filename.split('.')[-0])[0]
-
+    tmp_filename = glob.glob('%s*' % tmp_filename.split('.')[0])[0]
+    local_output_filename = '%s_processed.mp4' % tmp_filename.split('.')[0]
     if scale:
         command = 'ffprobe -hide_banner -loglevel error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 %s' % (tmp_filename)
         #tmp_info = subprocess.check_output(command, shell=True,
@@ -113,21 +113,23 @@ def download_clip(video_identifier, output_filename,
                        '-i', '"%s"' % tmp_filename,
                        '-ss', str(start_time),
                        '-t', str(end_time - start_time),
+                       '-vf', 'scale=-2:%d' % scale,
                        '-c:v', 'libx264', '-c:a', 'copy',
                        '-threads', '1',
-                       '-loglevel', 'panic', '-vf', 'scale=-2:%d' % scale,
-                       '"%s"' % output_filename]
+                       '-loglevel', 'panic',
+                       '"%s"' % local_output_filename]
         else:
             command = ['ffmpeg',
                        '-i', '"%s"' % tmp_filename,
                        '-ss', str(start_time),
                        '-t', str(end_time - start_time),
+                       'scale=%d:-2' % scale,
                        '-c:v', 'libx264', '-c:a', 'copy',
                        '-threads', '1',
-                       '-loglevel', 'panic', '-vf', 'scale=%d:-2' % scale,
-                       '"%s"' % output_filename]
+                       '-loglevel', 'panic', '-vf',
+                       '"%s"' % local_output_filename]
     else:
-        '''
+
         command = ['ffmpeg',
                    '-i', '"%s"' % tmp_filename,
                    '-ss', str(start_time),
@@ -135,24 +137,31 @@ def download_clip(video_identifier, output_filename,
                    '-c:v', 'libx264', '-c:a', 'copy',
                    '-threads', '1',
                    '-loglevel', 'panic',
-                   '"%s"' % output_filename]
-        '''
-        output_filename = tmp_filename.split('.mp4')[0]+'processed.mp4'
-        ffmpeg_extract_subclip(tmp_filename, 1, 5, targetname=output_filename)
-        print(tmp_filename)
-        print(output_filename)
+                   '"%s"' % local_output_filename]
         #command = ['cp', '"%s"' % tmp_filename, os.path.join('/mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/', tmp_filename.split('/')[-1])]
-    '''
+
     command = ' '.join(command)
     try:
         output = subprocess.check_output(command, shell=True,
                                          stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as err:
+        os.remove(tmp_filename)
         return status, err.output
-    '''
+
+    os.remove(tmp_filename)
     # Check if the video was successfully saved.
-    status = os.path.exists(output_filename)
-    #os.remove(tmp_filename)
+    status = os.path.exists(local_output_filename)
+    if status:
+        command = ['mv',
+                   '"%s"' % local_output_filename,
+                   '"%s"' % output_filename]
+        command = ' '.join(command)
+        try:
+            output = subprocess.check_output(command, shell=True,
+                                             stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as err:
+            return status, err.output
+
     return status, 'Downloaded'
 
 
@@ -231,11 +240,10 @@ def main(input_csv, output_dir,
             trim_format, tmp_dir, scale) for i, row in dataset.iterrows())
 
     # Clean tmp dir.
-    #shutil.rmtree(tmp_dir)
+    shutil.rmtree(tmp_dir)
 
     # Save download report.
     with open(download_report, 'w') as fobj:
-        print(status_lst)
         fobj.write(json.dumps(status_lst))
 
 
