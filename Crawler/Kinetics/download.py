@@ -121,10 +121,10 @@ def download_clip(video_identifier, output_filename,
                        '-i', '"%s"' % tmp_filename,
                        '-ss', str(start_time),
                        '-t', str(end_time - start_time),
-                       'scale=%d:-2' % scale,
+                       '-vf', 'scale=%d:-2' % scale,
                        '-c:v', 'libx264', '-c:a', 'copy',
                        '-threads', '1',
-                       '-loglevel', 'panic', '-vf',
+                       '-loglevel', 'panic',
                        '"%s"' % local_output_filename]
     else:
 
@@ -245,7 +245,7 @@ def main(input_csv, output_dir,
             trim_format, tmp_dir, scale) for i, row in dataset.iterrows())
 
     # Clean tmp dir.
-    shutil.rmtree(tmp_dir)
+    #shutil.rmtree(tmp_dir)
 
     # Save download report.
     with open(download_report, 'w') as fobj:
