@@ -137,17 +137,19 @@ def download_clip(video_identifier, output_filename,
                    '-loglevel', 'panic',
                    '"%s"' % output_filename]
         '''
+        output_filename = tmp_filename
         ffmpeg_extract_subclip(tmp_filename, 1, 5, targetname=output_filename)
         print(tmp_filename)
         print(output_filename)
         #command = ['cp', '"%s"' % tmp_filename, os.path.join('/mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/', tmp_filename.split('/')[-1])]
+    '''
     command = ' '.join(command)
     try:
         output = subprocess.check_output(command, shell=True,
                                          stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as err:
         return status, err.output
-
+    '''
     # Check if the video was successfully saved.
     status = os.path.exists(output_filename)
     #os.remove(tmp_filename)
@@ -229,7 +231,7 @@ def main(input_csv, output_dir,
             trim_format, tmp_dir, scale) for i, row in dataset.iterrows())
 
     # Clean tmp dir.
-    shutil.rmtree(tmp_dir)
+    #shutil.rmtree(tmp_dir)
 
     # Save download report.
     with open(download_report, 'w') as fobj:
