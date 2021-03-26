@@ -149,6 +149,7 @@ def download_clip(video_identifier, output_filename,
     # Check if the video was successfully saved.
     status = os.path.exists(local_output_filename)
     if status:
+        print('moving from %s to %s' %(local_output_filename, output_filename))
         command = ['mv',
                    '"%s"' % local_output_filename,
                    '"%s"' % output_filename]
