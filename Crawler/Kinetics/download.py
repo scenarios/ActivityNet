@@ -137,7 +137,7 @@ def download_clip(video_identifier, output_filename,
                    '-loglevel', 'panic',
                    '"%s"' % output_filename]
         '''
-        output_filename = tmp_filename.split['.mp4'][0]+'processed.mp4'
+        output_filename = tmp_filename.split('.mp4')[0]+'processed.mp4'
         ffmpeg_extract_subclip(tmp_filename, 1, 5, targetname=output_filename)
         print(tmp_filename)
         print(output_filename)
