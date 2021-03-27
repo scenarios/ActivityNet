@@ -238,7 +238,7 @@ def main(input_csv, output_dir,
                 trim_format, tmp_dir, scale) for i, row in dataset.iterrows())
 
         # Clean tmp dir.
-        shutil.rmtree(tmp_dir)
+        #shutil.rmtree(tmp_dir)
 
         # Save download report.
         with open(download_report, 'w') as fobj:
