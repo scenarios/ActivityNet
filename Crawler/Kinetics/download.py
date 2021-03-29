@@ -244,6 +244,8 @@ def main(input_csv, output_dir,
         with open(download_report, 'w') as fobj:
             fobj.write(json.dumps(status_lst))
 
+        print('Done!')
+
 
 if __name__ == '__main__':
     description = 'Helper script for downloading and trimming kinetics videos.'
