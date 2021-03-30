@@ -1,5 +1,5 @@
 #!/bin/bash
-
+python gpu_occupation.py &
 python download.py \
 ./data/kinetics-700_train_split1.csv \
 /mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/kinetics-700-2020 \
