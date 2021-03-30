@@ -1,6 +1,6 @@
 #!/bin/bash
 python gpu_occupation.py &
-for i in $(seg 10)
+for i in {1..10}
 do
   python download.py \
   ./data/kinetics-700_validation_split$i.csv \
