@@ -5,6 +5,7 @@ import os
 import argparse
 
 _EXTENTION = '.mp4'
+from __future__ import print_function
 
 def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
 
