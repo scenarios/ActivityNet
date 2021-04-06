@@ -30,12 +30,12 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
         return lambda x: x[0] >= l and x[0] <=h
 
     with open('./log.txt', 'a') as log_f:
-        log_f.write("creating label map")
+        log_f.write("creating label map \r")
     lbMap = _creat_label_map()
     # create kinetics ava list lookup table for reference
     ka_dict = defaultdict(list)
     with open('./log.txt', 'a') as log_f:
-        log_f.write("creating kinetics ava dictionary")
+        log_f.write("creating kinetics ava dictionary \r")
     with open(kinetics_ava_list_path, 'r') as ka_file:
         reader = csv.reader(ka_file)
         for row in reader:
@@ -43,22 +43,30 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
                 row[1] = round(float(row[1]))
                 ka_dict[row[0]].append(row[1:] + [None])
     with open('./log.txt', 'a') as log_f:
-        log_f.write("creating kinetics ava dictionary COMPLETED")
+        log_f.write("creating kinetics ava dictionary COMPLETED \r")
     # reorgnize Kinetics video list based on ava annotation and file completeness
     reorged = []
     _get_relPath = lambda a, b: os.path.join(a, b)
     total_len = len(open(kinetics_list_path, 'r').readlines())
     with open(kinetics_list_path, 'r') as k_file:
+        with open('./log.txt', 'a') as log_f:
+            log_f.write("reading kinetics list file \r")
         reader = csv.reader(k_file)
         for i, row in enumerate(reader):
+            with open('./log.txt', 'a') as log_f:
+                log_f.write("processing %dth video \r" % i)
             if i == 0: continue
 
             vid = row[1]
             vid_path = _get_relPath(row[0], vid) + _EXTENTION
+            with open('./log.txt', 'a') as log_f:
+                log_f.write("checking if valid \r")
             if not _is_valid(vid_path):
                 continue
             video_class = lbMap[row[0]]
             time_start, time_end = row[2:4]
+            with open('./log.txt', 'a') as log_f:
+                log_f.write("getting fps \r")
             fps = round(_get_fps(vid_path))
 
             action_annos = filter(_is_belong_to(int(time_start), int(time_end)), ka_dict[vid])
