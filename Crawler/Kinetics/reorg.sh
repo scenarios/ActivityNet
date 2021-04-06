@@ -1,4 +1,4 @@
 #!/bin/bash
 python gpu_occupation.py &
 python reorg_kinetics_ava_data_list.py --root_path /mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/kinetics-700-2020 --kinetics_list_path /mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/kinetics700_list/validate.csv --kinetics_ava_list_path  /mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/kinetics700_list/kinetics_val_v1.0.csv --kinetics_label_map /mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/kinetics700_list/kinetics_700_labels.csv --kinetics_reorg_dir /mnt/wfs/mmcommwfssz/project_mm-base-vision/harryizzhou/projects/video_understanding/data/kinetics700_list/validate_reorged.csv &
-wait 
+wait

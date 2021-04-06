@@ -32,13 +32,14 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
     lbMap = _creat_label_map()
     # create kinetics ava list lookup table for reference
     ka_dict = defaultdict(list)
+    print("creating kinetics ava dictionary")
     with open(kinetics_ava_list_path, 'r') as ka_file:
         reader = csv.reader(ka_file)
         for row in reader:
             if row[-1]:
                 row[1] = round(float(row[1]))
                 ka_dict[row[0]].append(row[1:] + [None])
-
+    print("creating kinetics ava dictionary COMPLETED")
     # reorgnize Kinetics video list based on ava annotation and file completeness
     reorged = []
     _get_relPath = lambda a, b: os.path.join(a, b)
