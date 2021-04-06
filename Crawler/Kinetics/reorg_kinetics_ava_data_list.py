@@ -20,7 +20,7 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
         return lbmap
 
     def _is_valid(vid_path):
-        return not os.popen('ffmpeg -v error -i  "%s" -f null - 2>&1' % os.path.join(_ROOT_PATH, vid_path)).read()
+        return os.popen('ffmpeg -v error -i  "%s" -f null - 2>&1' % os.path.join(_ROOT_PATH, vid_path)).read()
 
     def _get_fps(vid_path):
         return eval(os.popen('ffprobe -v 0 -of csv=p=0 -select_streams v:0 -show_entries stream=r_frame_rate "%s" >&1' \
@@ -61,7 +61,10 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
             vid_path = _get_relPath(row[0], vid) + _EXTENTION
             with open('./log.txt', 'a') as log_f:
                 log_f.write("checking if valid \r")
-            if not _is_valid(vid_path):
+            _msg = _is_valid(vid_path)
+            with open('./log.txt', 'a') as log_f:
+                log_f.write("%s : %s \n\r" %(vid_path, _msg))
+            if _msg:
                 continue
             video_class = lbMap[row[0]]
             time_start, time_end = row[2:4]
