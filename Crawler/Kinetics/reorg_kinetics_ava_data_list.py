@@ -29,6 +29,13 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
     def _is_belong_to(l, h):
         return lambda x: x[0] >= l and x[0] <=h
 
+    def _get_relPath(cls, vid, start_time, end_time):
+        vid = '%s_%s_%s.mp4' % (vid,
+                                 "%06d" % start_time,
+                                 "%06d" % end_time)
+
+        return os.path.join(cls, vid)
+
     with open('./log.txt', 'a') as log_f:
         log_f.write("creating label map \r")
     lbMap = _creat_label_map()
@@ -58,7 +65,12 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
             if i == 0: continue
 
             vid = row[1]
-            vid_path = _get_relPath(row[0], vid) + _EXTENTION
+            video_class = lbMap[row[0]]
+            time_start, time_end = row[2:4]
+            vname = '%s_%s_%s' % (vid,
+                                 "%06d" % time_start,
+                                 "%06d" % time_end)
+            vid_path = _get_relPath(row[0], vname) + _EXTENTION
             with open('./log.txt', 'a') as log_f:
                 log_f.write("checking if valid \r")
             _msg = _is_valid(vid_path)
@@ -66,8 +78,6 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
                 log_f.write("%s : %s \n\r" %(vid_path, _msg))
             if _msg:
                 continue
-            video_class = lbMap[row[0]]
-            time_start, time_end = row[2:4]
             with open('./log.txt', 'a') as log_f:
                 log_f.write("getting fps \r")
             fps = round(_get_fps(vid_path))
@@ -76,18 +86,18 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
             anno = [None] * 7
             if action_annos:
                 for anno in action_annos:
-                    base = [vid]
+                    base = [vname]
                     anno.extend([video_class, time_start, time_end, fps, vid_path])
                     base.extend(anno)
                     reorged.append(base)
             else:
-                base = [vid]
+                base = [vname]
                 anno.extend([video_class, time_start, time_end, fps, vid_path])
                 base.extend(anno)
                 reorged.append(base)
 
             with open('./process.txt', 'w') as log_f:
-                log_f.write("%ith video clip: process completed" % i)
+                log_f.write("%dth/%d video clip: process completed" % (i, total_len))
 
     return reorged
 
