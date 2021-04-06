@@ -70,7 +70,8 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
                 base.extend(anno)
                 reorged.append(base)
 
-            print("%ith video clip: process completed" % i, end="\r")
+            with open('./log.txt', 'w') as log_f:
+                log_f.write("%ith video clip: process completed" % i)
 
     return reorged
 
