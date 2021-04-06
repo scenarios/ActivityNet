@@ -29,6 +29,7 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
     def _is_belong_to(l, h):
         return lambda x: x[0] >= l and x[0] <=h
 
+    print("creating label map")
     lbMap = _creat_label_map()
     # create kinetics ava list lookup table for reference
     ka_dict = defaultdict(list)
