@@ -125,6 +125,7 @@ if __name__ == '__main__':
     args.kinetics_reorg_dir = '/Users/yizhouzhou/Documents/workspace/projects/spatiotemporal_event_detection/data_acquisition/data_preparation/debug/kinetics_reorg_debug.csv'
     args.kinetics_label_map = '/Users/yizhouzhou/Documents/workspace/projects/spatiotemporal_event_detection/data_acquisition/data_preparation/debug/kinetics_700_labels.csv'
     """
+    print("kinetics_list_path")
     print(args.kinetics_list_path)
     if args.kinetics_list_path:
         _LABEL_MAP_PATH = args.kinetics_label_map
