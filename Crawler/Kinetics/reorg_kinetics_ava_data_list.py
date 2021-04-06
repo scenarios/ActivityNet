@@ -29,12 +29,12 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
     def _is_belong_to(l, h):
         return lambda x: x[0] >= l and x[0] <=h
 
-    with open('./log.txt', 'wa') as log_f:
+    with open('./log.txt', 'a') as log_f:
         log_f.write("creating label map")
     lbMap = _creat_label_map()
     # create kinetics ava list lookup table for reference
     ka_dict = defaultdict(list)
-    with open('./log.txt', 'wa') as log_f:
+    with open('./log.txt', 'a') as log_f:
         log_f.write("creating kinetics ava dictionary")
     with open(kinetics_ava_list_path, 'r') as ka_file:
         reader = csv.reader(ka_file)
@@ -42,7 +42,7 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
             if row[-1]:
                 row[1] = round(float(row[1]))
                 ka_dict[row[0]].append(row[1:] + [None])
-    with open('./log.txt', 'wa') as log_f:
+    with open('./log.txt', 'a') as log_f:
         log_f.write("creating kinetics ava dictionary COMPLETED")
     # reorgnize Kinetics video list based on ava annotation and file completeness
     reorged = []
