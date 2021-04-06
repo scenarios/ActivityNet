@@ -68,8 +68,8 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
             video_class = lbMap[row[0]]
             time_start, time_end = row[2:4]
             vname = '%s_%s_%s' % (vid,
-                                 "%06d" % time_start,
-                                 "%06d" % time_end)
+                                 "%06d" % int(time_start),
+                                 "%06d" % int(time_end))
             vid_path = _get_relPath(row[0], vname) + _EXTENTION
             with open('./log.txt', 'a') as log_f:
                 log_f.write("checking if valid \r")
