@@ -5,7 +5,6 @@ import os
 import argparse
 
 _EXTENTION = '.mp4'
-from __future__ import print_function
 
 def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
 
@@ -26,6 +25,9 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
     def _get_fps(vid_path):
         return eval(os.popen('ffprobe -v 0 -of csv=p=0 -select_streams v:0 -show_entries stream=r_frame_rate "%s" >&1' \
                              % os.path.join(_ROOT_PATH, vid_path)).read().split('\n')[0])
+
+    def _is_belong_to(l, h):
+        return lambda x: x[0] >= l and x[0] <=h
 
     lbMap = _creat_label_map()
     # create kinetics ava list lookup table for reference
@@ -54,7 +56,7 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
             time_start, time_end = row[2:4]
             fps = round(_get_fps(vid_path))
 
-            action_annos = ka_dict[vid]
+            action_annos = filter(_is_belong_to(int(time_start), int(time_end)), ka_dict[vid])
             anno = [None] * 7
             if action_annos:
                 for anno in action_annos:
