@@ -62,8 +62,7 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
                 continue
             fps = round(_get_fps(vid_path))
 
-            action_annos = filter(_is_belong_to(int(time_start), int(time_end)), ka_dict[vid])
-            anno = [None] * 7
+            action_annos = list(filter(_is_belong_to(int(time_start), int(time_end)), ka_dict[vid]))
             if action_annos:
                 for anno in action_annos:
                     base = [vname]
@@ -71,9 +70,10 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
                     base.extend(anno)
                     reorged.append(base)
             else:
+                none_anno = [None] * 7
                 base = [vname]
-                anno.extend([video_class, time_start, time_end, fps, vid_path])
-                base.extend(anno)
+                none_anno.extend([video_class, time_start, time_end, fps, vid_path])
+                base.extend(none_anno)
                 reorged.append(base)
 
             with open('./process.txt', 'w') as log_f:
@@ -121,16 +121,15 @@ if __name__ == '__main__':
     global _ROOT_PATH
 
     _ROOT_PATH = args.root_path
-    """
+    '''
     # for debug
     _ROOT_PATH = '/Users/yizhouzhou/Documents/workspace/projects/spatiotemporal_event_detection/data_acquisition/data_preparation/debug/'
     args.kinetics_list_path = '/Users/yizhouzhou/Documents/workspace/projects/spatiotemporal_event_detection/data_acquisition/data_preparation/debug/validate.csv'
     args.kinetics_ava_list_path = '/Users/yizhouzhou/Documents/workspace/projects/spatiotemporal_event_detection/data_acquisition/data_preparation/debug/kinetics_val_v1.0.csv'
     args.kinetics_reorg_dir = '/Users/yizhouzhou/Documents/workspace/projects/spatiotemporal_event_detection/data_acquisition/data_preparation/debug/kinetics_reorg_debug.csv'
     args.kinetics_label_map = '/Users/yizhouzhou/Documents/workspace/projects/spatiotemporal_event_detection/data_acquisition/data_preparation/debug/kinetics_700_labels.csv'
-    """
-    print("kinetics_list_path")
-    print(args.kinetics_list_path)
+    '''
+
     if args.kinetics_list_path:
         _LABEL_MAP_PATH = args.kinetics_label_map
         reorgKinetics(args.kinetics_list_path, args.kinetics_ava_list_path, args.kinetics_reorg_dir)
