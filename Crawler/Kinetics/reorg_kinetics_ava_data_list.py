@@ -35,7 +35,7 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
     with open(kinetics_ava_list_path, 'r') as ka_file:
         reader = csv.reader(ka_file)
         for row in reader:
-            if row[-1]:
+            if len(row) == 7:
                 row[1] = round(float(row[1]))
                 ka_dict[row[0]].append(row[1:] + [None])
 
