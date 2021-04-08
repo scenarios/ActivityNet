@@ -23,8 +23,13 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
         return os.popen('ffmpeg -v error -i  "%s" -f null - 2>&1' % os.path.join(_ROOT_PATH, vid_path)).read()
 
     def _get_fps(vid_path):
-        return eval(os.popen('ffprobe -v 0 -of csv=p=0 -select_streams v:0 -show_entries stream=r_frame_rate "%s" >&1' \
+        try:
+            fps = eval(os.popen('ffprobe -v 0 -of csv=p=0 -select_streams v:0 -show_entries stream=r_frame_rate "%s" >&1' \
                              % os.path.join(_ROOT_PATH, vid_path)).read().split('\n')[0])
+        except Exception:
+            fps = None
+
+        return fps
 
     def _is_belong_to(l, h):
         return lambda x: x[0] >= l and x[0] <=h
@@ -60,7 +65,10 @@ def _reorgKinetics(kinetics_list_path, kinetics_ava_list_path):
                 with open('./log.txt', 'a') as log_f:
                     log_f.write("%s : %s \n\r" % (vid_path, _msg))
                 continue
-            fps = round(_get_fps(vid_path))
+            fps = _get_fps(vid_path)
+            if not fps:
+                continue
+            fps = round(fps)
 
             action_annos = list(filter(_is_belong_to(int(time_start), int(time_end)), ka_dict[vid]))
             if action_annos:
